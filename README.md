@@ -108,7 +108,8 @@ Each parcel maintains an array of status logs:
 
 ## 🧪 Running the Project
 
-```bash
+```
+bash
 # install dependencies
 npm install
 
@@ -120,6 +121,7 @@ npm run build
 
 # start in production
 npm start
+```
 
 
 
