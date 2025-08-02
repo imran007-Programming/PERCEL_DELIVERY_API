@@ -105,27 +105,28 @@ Each parcel maintains an array of status logs:
 }
 ]
 
-
-## 🧪 Running the Project
-
 ```
-bash
-# install dependencies
+# Running the Project
+```
+
+```bash 
+
+install dependencies
 npm install
 
-# run in development
+run in development
 npm run dev
 
-# build for production
+ build for production
 npm run build
 
-# start in production
+start in production
 npm start
 ```
 
 
 
-
+```
 # Server configuration
 PORT=5000
 NODE_ENV=development
@@ -147,3 +148,4 @@ JWT_REFRESH_SECRET_EXPIRES=30d
 # Nodemailer (for email notifications)
 USER_EMAIL=your_email@gmail.com
 APP_PASSWORD=your_app_password
+```
