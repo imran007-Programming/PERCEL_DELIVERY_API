@@ -14,6 +14,7 @@ import { JwtPayload } from "jsonwebtoken";
 
 const loginUserService = async (res:Response,payload: Partial<IUser>) => {
   const { email, password } = payload;
+
   const ExistUser = await User.findOne({ email });
   if (!ExistUser) {
     throw new AppError(httpStatus.NOT_FOUND, "Email doesn't found");

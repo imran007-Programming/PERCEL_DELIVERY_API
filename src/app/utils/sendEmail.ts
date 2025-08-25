@@ -11,7 +11,7 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
   });
 
   const mailOptions = {
-    from: `"SkyDrop Express" <${envVars.USER_EMAIL}>`,
+    from: `"Fast Track Delivery" <${envVars.USER_EMAIL}>`,
     to,
     subject,
     html,

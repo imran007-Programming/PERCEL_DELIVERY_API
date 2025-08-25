@@ -11,6 +11,10 @@ const router = Router();
 router.post("/register",zodValidation(userZodSchema),userControllers.createUser);
 /* get all user */
 router.get("/allusers",checkAuth(Role.ADMIN),userControllers.getAllusers);
+
+/* get me */
+router.get("/me", checkAuth(...Object.values(Role)), userControllers.getMe)
+
 /* delete a user */
 router.delete("/delete/:userId",checkAuth(Role.ADMIN),userControllers.deleteUser);
 /* update a user */

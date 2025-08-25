@@ -3,20 +3,26 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 import { Allrouters } from "./app/Allroutes";
 import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
+import { envVars } from "./app/config/env";
+
 const app = express();
 app.use(express.json());
 /* cookieparser */
 app.use(cookieParser());
-/* base url */
-app.use("/api/v1",Allrouters)
+
 app.use(
   cors(
-  //   {
-  //   origin: envVars.FRONTEND_URL,
-  //   credentials: true, // ✅ allow sending cookies
-  // }
+    {
+    origin:envVars.FRONTEND_URL ,
+    credentials: true, // ✅ allow sending cookies
+  }
 )
 );
+
+
+/* base url */
+app.use("/api/v1",Allrouters)
+
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).send({

@@ -36,6 +36,7 @@ export interface IPercel {
   estimate_delievery_date: Date;
   deliveredAt?: Date;
   isPaid?: boolean;
+  isConfirm?:boolean,
   currentLocation?: string;
   deliveryAgent?: Types.ObjectId;
   trackingEvents: ITrackingEvent[];

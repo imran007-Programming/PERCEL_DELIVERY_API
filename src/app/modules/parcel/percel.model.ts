@@ -28,7 +28,7 @@ const percelSchema = new Schema<IPercel>(
     percelType: { type: String, required: true },
     weight: {
       value: { type: Number, required: true },
-      unit: { type: String, enum: ["kg", "g"], required: true },
+      unit: { type: String, enum: ["kg", "gm"], required: true },
     },
     receiverAddress: { type: String },
     trackingId: { type: String, required: true, unique: true },
@@ -40,6 +40,10 @@ const percelSchema = new Schema<IPercel>(
     isPaid: {
       type: Boolean,
       default: false,
+    },
+    isConfirm:{
+      type:Boolean,
+      default:false
     },
     currentLocation: {
       type: String,

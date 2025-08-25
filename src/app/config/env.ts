@@ -12,6 +12,7 @@ interface EnvConfig {
   JWT_REFRESH_SECRET_EXPIRES: string;
   USER_EMAIL: string;
   APP_PASSWORD: string;
+  FRONTEND_URL:string
 }
 
 const loadlEnvVariables = (): EnvConfig => {
@@ -26,6 +27,7 @@ const loadlEnvVariables = (): EnvConfig => {
     "JWT_REFRESH_SECRET_EXPIRES",
     "USER_EMAIL",
     "APP_PASSWORD",
+    "FRONTEND_URL"
   ];
   envVariables.forEach((key) => {
     if (!process.env[key]) {
@@ -44,6 +46,7 @@ const loadlEnvVariables = (): EnvConfig => {
       .JWT_REFRESH_SECRET_EXPIRES as string,
     USER_EMAIL: process.env.USER_EMAIL as string,
     APP_PASSWORD: process.env.APP_PASSWORD as string,
+   FRONTEND_URL:process.env.FRONTEND_URL as string
   };
 };
 

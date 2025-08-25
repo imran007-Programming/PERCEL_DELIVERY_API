@@ -8,7 +8,6 @@ import { JwtPayload } from "jsonwebtoken";
 
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-  
     const user = await userServices.createUserService(req.body);
     sendResponse(res, {
       statusCode: 201,
@@ -18,24 +17,40 @@ const createUser = catchAsync(
     });
   }
 );
+/* Get Me controller */
+
+const getMe = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const DecodedToken = req.user as JwtPayload;
+    const result = await userServices.GetMeService(DecodedToken.userId);
+
+    sendResponse(res, {
+      statusCode: 201,
+      success: true,
+      message: "User Profile Retrive Successfully",
+      data: result.data,
+    });
+  }
+);
+
 /* get all user controller */
 const getAllusers = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const query=req.query as Record<string,string>
+    const query = req.query as Record<string, string>;
     const userData = await userServices.getAllUserService(query);
     sendResponse(res, {
       statusCode: 201,
       success: true,
       message: "User retrived Successfully",
       data: userData,
-      meta:userData.meta
+      meta: userData.meta,
     });
   }
 );
 /* delete user controller */
 const deleteUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId= req.params.userId
+    const userId = req.params.userId;
     const user = await userServices.deleteUserService(userId);
     sendResponse(res, {
       statusCode: 201,
@@ -46,12 +61,16 @@ const deleteUser = catchAsync(
   }
 );
 /* update a usrer */
-const updateUser= catchAsync(
+const updateUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-     const userId= req.params.userId;
-     const payload= req.body;
-     const verifiedToken=req.user
-    const user = await userServices.updateUserService(userId,payload,verifiedToken as JwtPayload);
+    const userId = req.params.userId;
+    const payload = req.body;
+    const verifiedToken = req.user;
+    const user = await userServices.updateUserService(
+      userId,
+      payload,
+      verifiedToken as JwtPayload
+    );
     sendResponse(res, {
       statusCode: 201,
       success: true,
@@ -60,12 +79,12 @@ const updateUser= catchAsync(
     });
   }
 );
- 
+
 /* block a user */
-const blockUser=catchAsync(
+const blockUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-     const userId= req.params.userId;
-     const blockUser= await userServices.blockUserService(userId)
+    const userId = req.params.userId;
+    const blockUser = await userServices.blockUserService(userId);
     sendResponse(res, {
       statusCode: 201,
       success: true,
@@ -75,10 +94,10 @@ const blockUser=catchAsync(
   }
 );
 /* unblock a user */
-const unblockUser=catchAsync(
+const unblockUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-     const userId= req.params.userId;
-     const unblockUser= await userServices.unblockUserService(userId)
+    const userId = req.params.userId;
+    const unblockUser = await userServices.unblockUserService(userId);
     sendResponse(res, {
       statusCode: 201,
       success: true,
@@ -94,6 +113,6 @@ export const userControllers = {
   deleteUser,
   updateUser,
   blockUser,
-  unblockUser
- 
+  unblockUser,
+  getMe,
 };

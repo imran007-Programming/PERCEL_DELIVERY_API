@@ -15,6 +15,7 @@ export const singleTrackingEventSchema = z.object({
     DELIVERY_STATUS.IN_TRANSIT,
     DELIVERY_STATUS.DELIVERED,
     DELIVERY_STATUS.CANCELED,
+    DELIVERY_STATUS.RETURNED_REQUEST,
   ]),
   location: z.string().min(1, "Location is required"),
   note: z.string(),
@@ -22,15 +23,15 @@ export const singleTrackingEventSchema = z.object({
 });
 
 export const createPercelZodSchema = z.object({
-  name: z.string("reciever name is require"),
-  phone: z.string("reciever phoneNumber is require"),
-  address: z.string("reciever address is require"),
-  email: z.string("reciever email is require"),
+  recevierName: z.string("reciever name is require"),
+  recevierPhone: z.string("reciever phoneNumber is require"),
+  recevierAddress: z.string("reciever address is require"),
+  recevierEmail: z.string("reciever email is require"),
   senderInfo: objectIdSchema,
   percelType: z.string().min(1, "Percel type is required"),
   weight: z.object({
     value: z.number().positive("Weight must be positive"),
-    unit: z.enum(["kg", "g"]),
+    unit: z.enum(["kg", "gm"]),
   }),
   pickupAddress: z.string().optional(),
   dispatchLocation: z.string().min(1, "Dispatch location is required"),
@@ -41,7 +42,7 @@ export const createPercelZodSchema = z.object({
   currentLocation: z.string().optional(),
   deliveryAgent: objectIdSchema.optional(),
   notes: z.string().optional(),
-  receiverAddress:z.string().optional(),
+  
 
 });
 export const updatePercelZodSchema = z.object({

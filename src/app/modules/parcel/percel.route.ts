@@ -13,6 +13,9 @@ router.post("/create",checkAuth(Role.ADMIN,Role.SENDER),zodValidation(createPerc
 /* get all percel */
 router.get("/getallpercel",checkAuth(Role.ADMIN),percelController.getAllPercel)
 
+/* get all percel for sender */
+// router.get("/getallpercelbysender/:senderId",checkAuth(Role.SENDER),percelController.getAllPercel)
+
 /* return percel_request_by reciever */
 router.patch("/return_request",percelController.retrunPercel)
 
@@ -35,5 +38,10 @@ router.delete("/:percelId",checkAuth(Role.ADMIN), percelController.deletePercel)
 /* get all percel by senderInfo */
 router.get("/getpercelInfo/:senderId",checkAuth(Role.ADMIN,Role.SENDER),percelController.getPercelInfo)
 
+/* Get incoming percel for receiver */
+router.get("/getpercelinfo-receiver/:receiverId",checkAuth(Role.RECEIVER),percelController.getPercelInfoByReceiver)
+
+/* Receiver get the percel and chnage the status isConfirm True */
+router.patch("/confirmation/:percelId",checkAuth(Role.RECEIVER),percelController.setConfirmation)
 
 export const percelRoutes = router;

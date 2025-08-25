@@ -7,6 +7,7 @@ import httpStatus from "http-status-codes";
 import { authServices } from "./auth.service";
 import { setAuthCookies } from "../../utils/setCookies";
 import AppError from "../../errorHelper/AppError";
+
 const loginUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = await authServices.loginUserService(res,req.body);

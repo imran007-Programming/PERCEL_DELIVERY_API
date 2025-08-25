@@ -8,7 +8,7 @@ export enum ISActive{
 export enum Role{
     ADMIN="ADMIN",
     SENDER="SENDER",
-    RECEVIER="RECEVIER",
+    RECEIVER="RECEIVER",
     DELIVERY_AGENT="DELIVERY_AGENT"
 }
 export interface IAuthProvider {

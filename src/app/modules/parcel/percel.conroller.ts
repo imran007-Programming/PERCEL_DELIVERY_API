@@ -1,4 +1,4 @@
-import { JwtPayload } from 'jsonwebtoken';
+import { JwtPayload } from "jsonwebtoken";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import httpStatus from "http-status-codes";
 import { NextFunction, Request, Response } from "express";
@@ -18,29 +18,74 @@ const createPercel = catchAsync(async (req: Request, res: Response) => {
 
 /* get Allpercel controller */
 const getAllPercel = catchAsync(async (req: Request, res: Response) => {
-  const query=req.query as  Record<string,string>
+  const query = req.query as Record<string, string>;
   const percelData = await percelServices.getAllPercelService(query);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "percel Retrived Succesfully",
     data: percelData,
-   
+  });
+});
+
+/* get percel details by senderinfo */
+const getPercelInfo = catchAsync(async (req: Request, res: Response) => {
+  const senderId = req.params.senderId;
+  const query = req.query as Record<string, string>;
+
+  const percel = await percelServices.getPercelInfoBySenderService(
+    senderId,
+    query
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "percel retrived Succesfully",
+    data: percel,
+  });
+});
+
+/* get all incomeing percel by receiverId */
+const getPercelInfoByReceiver = catchAsync(
+  async (req: Request, res: Response) => {
+    const receiverId = req.params.receiverId;
+    const query = req.query as Record<string, string>;
+
+    const percel = await percelServices.getPercelInfoByReceiverService(
+      receiverId,
+      query
+    );
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "percel retrived Succesfully",
+      data: percel,
+    });
+  }
+);
+
+const setConfirmation = catchAsync(async (req: Request, res: Response) => {
+  const percelId = req.params.percelId;
+
+  const percel = await percelServices.confrimationByReceiverService(percelId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "percel confirm Succesfully",
+    data: null,
   });
 });
 
 /* get Allpercel controller */
 const getPercelById = catchAsync(async (req: Request, res: Response) => {
-  const percelId= req.params.percelId
-
+  const percelId = req.params.percelId;
 
   const percel = await percelServices.getPercelByIdService(percelId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "percel Retrived Succesfully",
-    data: percel
-    
+    data: percel,
   });
 });
 
@@ -59,10 +104,14 @@ const deletePercel = catchAsync(async (req: Request, res: Response) => {
 /* delete percel controller */
 const updatePercel = catchAsync(async (req: Request, res: Response) => {
   const percelId = req.params.percelId;
-  const payload=req.body;
-  const decodedToken=req.user as JwtPayload
-  
-  const percel = await percelServices.updatePercelService(percelId,payload,decodedToken);
+  const payload = req.body;
+  const decodedToken = req.user as JwtPayload;
+
+  const percel = await percelServices.updatePercelService(
+    percelId,
+    payload,
+    decodedToken
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -72,21 +121,7 @@ const updatePercel = catchAsync(async (req: Request, res: Response) => {
 });
 
 /* get percel details by senderinfo */
-const getPercelInfo=catchAsync(async (req: Request, res: Response) => {
-  const senderId = req.params.senderId;
- 
-  const percel = await percelServices.getPercelInfoBySenderService(senderId);
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "percel retrived Succesfully",
-    data: percel,
-  });
-});
-
-
-/* get percel details by senderinfo */
-const trackingPercel=catchAsync(async (req: Request, res: Response) => {
+const trackingPercel = catchAsync(async (req: Request, res: Response) => {
   const trackingId = req.params.trackingId;
   const percel = await percelServices.getPercelInByTrackinIdService(trackingId);
   sendResponse(res, {
@@ -98,10 +133,7 @@ const trackingPercel=catchAsync(async (req: Request, res: Response) => {
 });
 
 /* return  percel */
-const retrunPercel=catchAsync(async (req: Request, res: Response) => {
-
-  
-
+const retrunPercel = catchAsync(async (req: Request, res: Response) => {
   const percel = await percelServices.returnPercelTrackinIdService(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -119,5 +151,7 @@ export const percelController = {
   updatePercel,
   getPercelInfo,
   trackingPercel,
-  retrunPercel
+  retrunPercel,
+  getPercelInfoByReceiver,
+  setConfirmation,
 };
