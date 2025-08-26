@@ -9,46 +9,37 @@ export class QueryBuilder<T> {
   constructor(modelQuery: Query<T[], T>, query: Record<string, string>) {
     this.modelQuery = modelQuery;
     this.query = query;
-  } 
-
-filter(): this {
-  const filter = { ...this.query };
-
-  // Remove any fields that should be excluded
-  for (const field of excludeField) {
-    delete filter[field];
   }
 
-  // Check if status is provided and handle filtering by the last status in trackingEvents
-  if (filter.status) {
-    console.log("Filtering by last status");
+  filter(): this {
+    const filter = { ...this.query };
 
-  
-    this.modelQuery = this.modelQuery.find({
-      trackingEvents: {
-        $elemMatch: {
-          status: filter.status,
+    // Remove any fields that should be excluded
+    for (const field of excludeField) {
+      delete filter[field];
+    }
+
+    // Check if status is provided and handle filtering by the last status in trackingEvents
+    if (filter.status) {
+      this.modelQuery = this.modelQuery.find({
+        trackingEvents: {
+          $elemMatch: {
+            status: filter.status,
+          },
         },
-      },
-    });
+      });
 
-    
+      delete filter.status;
+    }
 
+    // Apply any other filters that are left (excluding status)
+    if (Object.keys(filter).length > 0) {
+      this.modelQuery = this.modelQuery.find(filter);
+    }
 
-    delete filter.status;
+    return this;
   }
 
-  // Apply any other filters that are left (excluding status)
-  if (Object.keys(filter).length > 0) {
-    this.modelQuery = this.modelQuery.find(filter);
-  }
-
-  return this;
-}
-
-
-
-  
   // Search by term on specified fields
   search(searchableFields: string[]): this {
     const searchTerm = this.query.searchTerm || "";
@@ -94,13 +85,28 @@ filter(): this {
   }
 
   // Get pagination metadata
-  async getMeta() {
-    const totalDocuments = await this.modelQuery.model.countDocuments();
-  
+  async getMeta(queryId:{senderId:string,receiverId:string}) {
+   
+
+    let countQuery = this.modelQuery.model.countDocuments();
+
+    // Check if senderId or receiverId exists in the query
+    if (queryId?.senderId) {
+      countQuery = this.modelQuery.model.countDocuments({
+        senderInfo: queryId.senderId,
+      });
+    } else if (queryId?.receiverId) {
+      countQuery = this.modelQuery.model.countDocuments({
+        reciverInfo:queryId.receiverId,
+      });
+    }
+
+    // Get the total document count based on sender or receiver
+    const totalDocuments = await countQuery;
+    
 
     const page = Number(this.query.page) || 1;
     const limit = Number(this.query.limit) || 10;
-
     const totalPage = Math.ceil(totalDocuments / limit);
 
     return { page, limit, total: totalDocuments, totalPage };

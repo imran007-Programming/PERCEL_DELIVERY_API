@@ -113,31 +113,32 @@ const getAllPercelService = async (query: Record<string, string>) => {
   };
 };
 
-
-
-
-
-
 /* get percel by senderInfo */
-const getPercelInfoBySenderService = async (senderId: string, query: Record<string, string>) => {
-  const queryBuilder = new QueryBuilder(Percel.find({senderInfo: senderId}), query);
+const getPercelInfoBySenderService = async (
+  senderId: string,
+  query: Record<string, string>
+) => {
 
 
+  const queryBuilder = new QueryBuilder(
+    Percel.find({ senderInfo: senderId }),
+    query
+  );
   
+
   // Apply filtering, searching, sorting, etc.
   const percels = queryBuilder
-    .filter()  
-    .search(percelSearchableFields)  
+    .filter()
+    .search(percelSearchableFields)
 
-    .sort()    
-    .fields()  
-    .paginate();  
+    .sort()
+    .fields()
+    .paginate();
 
   const [percelData, meta] = await Promise.all([
-    percels.build(),  // Build the aggregation query
-    queryBuilder.getMeta(), // Get metadata for pagination
+    percels.build(),
+    queryBuilder.getMeta({sederId:senderId}),
   ]);
- 
 
   return {
     percelData,
@@ -146,25 +147,28 @@ const getPercelInfoBySenderService = async (senderId: string, query: Record<stri
 };
 
 /* get percel by receiverId */
-const getPercelInfoByReceiverService = async (receiverId: string, query: Record<string, string>) => {
-  const queryBuilder = new QueryBuilder(Percel.find({reciverInfo: receiverId}), query);
+const getPercelInfoByReceiverService = async (
+  receiverId: string,
+  query: Record<string, string>
+) => {
+  const queryBuilder = new QueryBuilder(
+    Percel.find({ reciverInfo: receiverId }),
+    query
+  );
 
-
-  
   // Apply filtering, searching, sorting, etc.
   const percels = queryBuilder
-    .filter()  
-    .search(percelSearchableFields)  
+    .filter()
+    .search(percelSearchableFields)
 
-    .sort()    
-    .fields()  
-    .paginate();  
+    .sort()
+    .fields()
+    .paginate();
 
   const [percelData, meta] = await Promise.all([
-    percels.build(), 
-    queryBuilder.getMeta(), 
+    percels.build(),
+    queryBuilder.getMeta({receiverId:receiverId}),
   ]);
- 
 
   return {
     percelData,
@@ -172,32 +176,18 @@ const getPercelInfoByReceiverService = async (receiverId: string, query: Record<
   };
 };
 
-
-const confrimationByReceiverService = async (percelId:string) => {
+const confrimationByReceiverService = async (percelId: string) => {
   const findPercel = await Percel.findOne({ _id: percelId });
 
   if (!findPercel) {
     throw new AppError(httpStatus.NOT_FOUND, "percel not found");
   }
 
-  
   // Update the isConfirm value to true
   findPercel.isConfirm = true;
 
- 
   await findPercel.save();
 };
-
-
-
-
-
-
-
-
-
-
-
 
 /* get all percel */
 const getPercelByIdService = async (percelId: string) => {
@@ -210,7 +200,6 @@ const getPercelByIdService = async (percelId: string) => {
     .populate("senderInfo", "name phone address email")
     .populate("reciverInfo", "name phone address email");
 };
-
 
 /* delete a percel */
 const deletePercelService = async (percelId: string) => {
@@ -227,7 +216,6 @@ const updatePercelService = async (
   payload: Partial<IPercel>,
   decodedToken: JwtPayload
 ) => {
-  console.log(payload)
   const findPercel = await Percel.findById(percelId);
   if (!findPercel) {
     throw new AppError(httpStatus.NOT_FOUND, "Parcel not found");
@@ -420,6 +408,6 @@ export const percelServices = {
   getPercelInfoBySenderService,
   getPercelInByTrackinIdService,
   returnPercelTrackinIdService,
- getPercelInfoByReceiverService,
- confrimationByReceiverService
+  getPercelInfoByReceiverService,
+  confrimationByReceiverService,
 };
