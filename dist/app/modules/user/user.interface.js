@@ -10,6 +10,6 @@ var Role;
 (function (Role) {
     Role["ADMIN"] = "ADMIN";
     Role["SENDER"] = "SENDER";
-    Role["RECEVIER"] = "RECEVIER";
+    Role["RECEIVER"] = "RECEIVER";
     Role["DELIVERY_AGENT"] = "DELIVERY_AGENT";
 })(Role || (exports.Role = Role = {}));

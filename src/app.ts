@@ -14,7 +14,7 @@ app.use(
   cors(
     {
     origin:envVars.FRONTEND_URL ,
-    credentials: true, // ✅ allow sending cookies
+    credentials: true, 
   }
 )
 );

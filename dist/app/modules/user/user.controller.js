@@ -57,6 +57,26 @@ var createUser = (0, catchAsync_1.catchAsync)(function (req, res, next) { return
         }
     });
 }); });
+/* Get Me controller */
+var getMe = (0, catchAsync_1.catchAsync)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var DecodedToken, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                DecodedToken = req.user;
+                return [4 /*yield*/, user_service_1.userServices.GetMeService(DecodedToken.userId)];
+            case 1:
+                result = _a.sent();
+                (0, sendResponse_1.sendResponse)(res, {
+                    statusCode: 201,
+                    success: true,
+                    message: "User Profile Retrive Successfully",
+                    data: result.data,
+                });
+                return [2 /*return*/];
+        }
+    });
+}); });
 /* get all user controller */
 var getAllusers = (0, catchAsync_1.catchAsync)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var query, userData;
@@ -72,7 +92,6 @@ var getAllusers = (0, catchAsync_1.catchAsync)(function (req, res, next) { retur
                     success: true,
                     message: "User retrived Successfully",
                     data: userData,
-                    meta: userData.meta
                 });
                 return [2 /*return*/];
         }
@@ -166,5 +185,6 @@ exports.userControllers = {
     deleteUser: deleteUser,
     updateUser: updateUser,
     blockUser: blockUser,
-    unblockUser: unblockUser
+    unblockUser: unblockUser,
+    getMe: getMe,
 };

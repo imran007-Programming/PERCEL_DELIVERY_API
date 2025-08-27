@@ -57,7 +57,7 @@ var checkAuth = function () {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    accessToken = req.headers.authorization;
+                    accessToken = req.headers.authorization || req.cookies.accessToken;
                     if (!accessToken) {
                         throw new AppError_1.default(403, "token not provided");
                     }

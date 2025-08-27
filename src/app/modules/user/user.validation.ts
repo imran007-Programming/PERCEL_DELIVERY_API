@@ -50,12 +50,10 @@ export const updateUserZodSchema = z.object({
     })
     .refine((val) => /\d/.test(val), {
       message: "Password must contain at least one digit",
-    })
-   .refine((val) => /[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>/?`~]/.test(val), {
+    }).refine((val) => /[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>/?`~]/.test(val), {
   message: "Password must contain at least one special character",
 }).optional(),
-    
-  phone: z
+phone: z
     .string()
     .regex(
       /^(?:\+88)?01[3-9]\d{8}$/,

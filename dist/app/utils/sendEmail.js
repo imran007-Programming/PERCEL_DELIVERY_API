@@ -55,7 +55,7 @@ var sendEmail = function (to, subject, html) { return __awaiter(void 0, void 0, 
                     },
                 });
                 mailOptions = {
-                    from: "\"SkyDrop Express\" <".concat(env_1.envVars.USER_EMAIL, ">"),
+                    from: "\"Fast Track Delivery\" <".concat(env_1.envVars.USER_EMAIL, ">"),
                     to: to,
                     subject: subject,
                     html: html,

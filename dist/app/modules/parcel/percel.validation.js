@@ -15,21 +15,22 @@ exports.singleTrackingEventSchema = zod_1.z.object({
         percel_interface_1.DELIVERY_STATUS.IN_TRANSIT,
         percel_interface_1.DELIVERY_STATUS.DELIVERED,
         percel_interface_1.DELIVERY_STATUS.CANCELED,
+        percel_interface_1.DELIVERY_STATUS.RETURNED_REQUEST,
     ]),
     location: zod_1.z.string().min(1, "Location is required"),
     note: zod_1.z.string(),
     timestamp: zod_1.z.string().datetime().optional(),
 });
 exports.createPercelZodSchema = zod_1.z.object({
-    name: zod_1.z.string("reciever name is require"),
-    phone: zod_1.z.string("reciever phoneNumber is require"),
-    address: zod_1.z.string("reciever address is require"),
-    email: zod_1.z.string("reciever email is require"),
+    recevierName: zod_1.z.string("reciever name is require"),
+    recevierPhone: zod_1.z.string("reciever phoneNumber is require"),
+    recevierAddress: zod_1.z.string("reciever address is require"),
+    recevierEmail: zod_1.z.string("reciever email is require"),
     senderInfo: objectIdSchema,
     percelType: zod_1.z.string().min(1, "Percel type is required"),
     weight: zod_1.z.object({
         value: zod_1.z.number().positive("Weight must be positive"),
-        unit: zod_1.z.enum(["kg", "g"]),
+        unit: zod_1.z.enum(["kg", "gm"]),
     }),
     pickupAddress: zod_1.z.string().optional(),
     dispatchLocation: zod_1.z.string().min(1, "Dispatch location is required"),
@@ -40,7 +41,6 @@ exports.createPercelZodSchema = zod_1.z.object({
     currentLocation: zod_1.z.string().optional(),
     deliveryAgent: objectIdSchema.optional(),
     notes: zod_1.z.string().optional(),
-    receiverAddress: zod_1.z.string().optional(),
 });
 exports.updatePercelZodSchema = zod_1.z.object({
     name: zod_1.z.string("reciever name is require").optional(),

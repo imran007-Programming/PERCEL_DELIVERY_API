@@ -18,6 +18,7 @@ var loadlEnvVariables = function () {
         "JWT_REFRESH_SECRET_EXPIRES",
         "USER_EMAIL",
         "APP_PASSWORD",
+        "FRONTEND_URL"
     ];
     envVariables.forEach(function (key) {
         if (!process.env[key]) {
@@ -36,6 +37,7 @@ var loadlEnvVariables = function () {
             .JWT_REFRESH_SECRET_EXPIRES,
         USER_EMAIL: process.env.USER_EMAIL,
         APP_PASSWORD: process.env.APP_PASSWORD,
+        FRONTEND_URL: process.env.FRONTEND_URL
     };
 };
 exports.envVars = loadlEnvVariables();

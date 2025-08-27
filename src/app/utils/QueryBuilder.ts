@@ -85,7 +85,7 @@ export class QueryBuilder<T> {
   }
 
   // Get pagination metadata
-  async getMeta(queryId:{senderId:string,receiverId:string}) {
+  async getMeta(queryId?:{senderId?:string,receiverId?:string}) {
    
 
     let countQuery = this.modelQuery.model.countDocuments();

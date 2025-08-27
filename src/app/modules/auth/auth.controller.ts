@@ -1,4 +1,4 @@
-import { JwtPayload } from 'jsonwebtoken';
+import { JwtPayload } from "jsonwebtoken";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
@@ -10,9 +10,8 @@ import AppError from "../../errorHelper/AppError";
 
 const loginUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const user = await authServices.loginUserService(res,req.body);
+    const user = await authServices.loginUserService(res, req.body);
 
- 
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
@@ -25,18 +24,19 @@ const loginUser = catchAsync(
 
 /* create a new accesstoken from refereshtoken  */
 
-const getNewAccessToken=catchAsync(
+const getNewAccessToken = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-  const refreshToken= req.cookies.refreshToken;
-  
-  if(!refreshToken){
-    throw new AppError(httpStatus.BAD_REQUEST, "No Refresh Token");
-  }
-  const tokenInfo= await authServices.getNewAccessTokenService(refreshToken as string)
- 
+    const refreshToken = req.cookies.refreshToken;
 
-  setAuthCookies(res,tokenInfo)
-       
+    if (!refreshToken) {
+      throw new AppError(httpStatus.BAD_REQUEST, "No Refresh Token");
+    }
+    const tokenInfo = await authServices.getNewAccessTokenService(
+      refreshToken as string
+    );
+
+    setAuthCookies(res, tokenInfo);
+
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
@@ -49,19 +49,19 @@ const getNewAccessToken=catchAsync(
 
 /* logout controller */
 
-const logout=catchAsync(
+const logout = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    res.clearCookie("accessToken",{
-      httpOnly:true,
-      secure:false,
-      sameSite:"lax",
-    })
-     res.clearCookie("refreshToken", {
+    res.clearCookie("accessToken", {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
     });
-       
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
@@ -79,10 +79,12 @@ const resetPassword = catchAsync(
     const decodedToken = req.user;
     const newPassword = req.body.newPassword;
     const oldPassword = req.body.oldPassword;
-    
-    
-     
-    await authServices.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload);
+
+    await authServices.resetPassword(
+      oldPassword,
+      newPassword,
+      decodedToken as JwtPayload
+    );
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -93,10 +95,9 @@ const resetPassword = catchAsync(
   }
 );
 
-
 export const authController = {
   loginUser,
   getNewAccessToken,
   logout,
-  resetPassword
+  resetPassword,
 };

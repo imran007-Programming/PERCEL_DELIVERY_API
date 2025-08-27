@@ -10,7 +10,7 @@ import { userSearchableFields } from "./user.constant";
 
 const createUserService = async (payload: Partial<IUser>) => {
   const { email, password, name, address, phone, ...rest } = payload;
-  console.log(payload);
+  
 
   const existUser = await User.findOne({ email });
 
@@ -101,7 +101,7 @@ const updateUserService = async (
   /* check role */
   if (payload.role) {
     if (
-      decodedToken.role === Role.RECEVIER ||
+      decodedToken.role === Role.RECEIVER ||
       decodedToken.role === Role.SENDER
     ) {
       throw new AppError(httpStatus.FORBIDDEN, "you are not authorized");
@@ -110,7 +110,7 @@ const updateUserService = async (
   if (payload.isActive || payload.isVerified || payload.isDeleted) {
     if (
       decodedToken.role === Role.SENDER ||
-      decodedToken.role === Role.RECEVIER
+      decodedToken.role === Role.RECEIVER
     ) {
       throw new AppError(httpStatus.FORBIDDEN, "you are not authorized");
     }

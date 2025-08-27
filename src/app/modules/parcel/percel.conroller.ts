@@ -101,7 +101,7 @@ const deletePercel = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-/* delete percel controller */
+/* update percel controller */
 const updatePercel = catchAsync(async (req: Request, res: Response) => {
   const percelId = req.params.percelId;
   const payload = req.body;

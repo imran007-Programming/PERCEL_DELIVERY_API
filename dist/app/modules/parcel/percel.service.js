@@ -59,14 +59,14 @@ var percel_model_1 = require("./percel.model");
 var AppError_1 = __importDefault(require("../../errorHelper/AppError"));
 var user_interface_1 = require("../user/user.interface");
 var sendEmail_1 = require("../../utils/sendEmail");
-var QueryBuilder_1 = require("../../utils/QueryBuilder");
 var percel_constant_1 = require("./percel.constant");
+var QueryBuilder_1 = require("../../utils/QueryBuilder");
 /* create A percel */
 var createPercelSevice = function (payload) { return __awaiter(void 0, void 0, void 0, function () {
     var receiver, sender, generateTrackingId, createPercel, subject, message;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, user_model_1.User.findOne({ email: payload.email })];
+            case 0: return [4 /*yield*/, user_model_1.User.findOne({ email: payload.recevierEmail })];
             case 1:
                 receiver = _a.sent();
                 return [4 /*yield*/, user_model_1.User.findOne({ _id: payload.senderInfo })];
@@ -74,11 +74,11 @@ var createPercelSevice = function (payload) { return __awaiter(void 0, void 0, v
                 sender = _a.sent();
                 if (!!receiver) return [3 /*break*/, 4];
                 return [4 /*yield*/, user_model_1.User.create({
-                        name: payload.name,
-                        email: payload.email,
-                        phone: payload.phone,
-                        address: payload.address,
-                        role: user_interface_1.Role.RECEVIER,
+                        name: payload.recevierName,
+                        email: payload.recevierEmail,
+                        phone: payload.recevierPhone,
+                        address: payload.recevierAddress,
+                        role: user_interface_1.Role.RECEIVER,
                     })];
             case 3:
                 receiver = _a.sent();
@@ -149,6 +149,77 @@ var getAllPercelService = function (query) { return __awaiter(void 0, void 0, vo
         }
     });
 }); };
+/* get percel by senderInfo */
+var getPercelInfoBySenderService = function (senderId, query) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryBuilder, percels, _a, percelData, meta;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                queryBuilder = new QueryBuilder_1.QueryBuilder(percel_model_1.Percel.find({ senderInfo: senderId }), query);
+                percels = queryBuilder
+                    .filter()
+                    .search(percel_constant_1.percelSearchableFields)
+                    .sort()
+                    .fields()
+                    .paginate();
+                return [4 /*yield*/, Promise.all([
+                        percels.build(),
+                        queryBuilder.getMeta({ senderId: senderId }),
+                    ])];
+            case 1:
+                _a = _b.sent(), percelData = _a[0], meta = _a[1];
+                return [2 /*return*/, {
+                        percelData: percelData,
+                        meta: meta,
+                    }];
+        }
+    });
+}); };
+/* get percel by receiverId */
+var getPercelInfoByReceiverService = function (receiverId, query) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryBuilder, percels, _a, percelData, meta;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                queryBuilder = new QueryBuilder_1.QueryBuilder(percel_model_1.Percel.find({ reciverInfo: receiverId }), query);
+                percels = queryBuilder
+                    .filter()
+                    .search(percel_constant_1.percelSearchableFields)
+                    .sort()
+                    .fields()
+                    .paginate();
+                return [4 /*yield*/, Promise.all([
+                        percels.build(),
+                        queryBuilder.getMeta({ receiverId: receiverId }),
+                    ])];
+            case 1:
+                _a = _b.sent(), percelData = _a[0], meta = _a[1];
+                return [2 /*return*/, {
+                        percelData: percelData,
+                        meta: meta,
+                    }];
+        }
+    });
+}); };
+var confrimationByReceiverService = function (percelId) { return __awaiter(void 0, void 0, void 0, function () {
+    var findPercel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, percel_model_1.Percel.findOne({ _id: percelId })];
+            case 1:
+                findPercel = _a.sent();
+                if (!findPercel) {
+                    throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "percel not found");
+                }
+                // Update the isConfirm value to true
+                findPercel.isConfirm = true;
+                return [4 /*yield*/, findPercel.save()];
+            case 2:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
 /* get all percel */
 var getPercelByIdService = function (percelId) { return __awaiter(void 0, void 0, void 0, function () {
     var existPercel;
@@ -164,21 +235,6 @@ var getPercelByIdService = function (percelId) { return __awaiter(void 0, void 0
                         .populate("senderInfo", "name phone address email")
                         .populate("reciverInfo", "name phone address email")];
             case 2: return [2 /*return*/, _a.sent()];
-        }
-    });
-}); };
-/* get percel by senderInfo */
-var getPercelInfoBySenderService = function (senderId) { return __awaiter(void 0, void 0, void 0, function () {
-    var Percels;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, percel_model_1.Percel.findOne({ senderInfo: senderId }).select("trackingId status pickupAddress receiverAddress fee percelType weight estimate_deleivery_date currentLocation")];
-            case 1:
-                Percels = _a.sent();
-                if (!Percels) {
-                    throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "percel not found");
-                }
-                return [2 /*return*/, Percels];
         }
     });
 }); };
@@ -327,7 +383,7 @@ var returnPercelTrackinIdService = function (payload) { return __awaiter(void 0,
                 if (!existUser) {
                     throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "user not found");
                 }
-                if (existUser.role !== user_interface_1.Role.RECEVIER) {
+                if (existUser.role !== user_interface_1.Role.RECEIVER) {
                     throw new AppError_1.default(http_status_codes_1.default.FORBIDDEN, "you are not able to return the percel");
                 }
                 lastStatus = (_b = (_a = percel.trackingEvents) === null || _a === void 0 ? void 0 : _a[percel.trackingEvents.length - 1]) === null || _b === void 0 ? void 0 : _b.status;
@@ -359,4 +415,6 @@ exports.percelServices = {
     getPercelInfoBySenderService: getPercelInfoBySenderService,
     getPercelInByTrackinIdService: getPercelInByTrackinIdService,
     returnPercelTrackinIdService: returnPercelTrackinIdService,
+    getPercelInfoByReceiverService: getPercelInfoByReceiverService,
+    confrimationByReceiverService: confrimationByReceiverService,
 };

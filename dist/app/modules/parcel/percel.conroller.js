@@ -83,6 +83,67 @@ var getAllPercel = (0, catchAsync_1.catchAsync)(function (req, res) { return __a
         }
     });
 }); });
+/* get percel details by senderinfo */
+var getPercelInfo = (0, catchAsync_1.catchAsync)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var senderId, query, percel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                senderId = req.params.senderId;
+                query = req.query;
+                return [4 /*yield*/, percel_service_1.percelServices.getPercelInfoBySenderService(senderId, query)];
+            case 1:
+                percel = _a.sent();
+                (0, sendResponse_1.sendResponse)(res, {
+                    statusCode: http_status_codes_1.default.OK,
+                    success: true,
+                    message: "percel retrived Succesfully",
+                    data: percel,
+                });
+                return [2 /*return*/];
+        }
+    });
+}); });
+/* get all incomeing percel by receiverId */
+var getPercelInfoByReceiver = (0, catchAsync_1.catchAsync)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var receiverId, query, percel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                receiverId = req.params.receiverId;
+                query = req.query;
+                return [4 /*yield*/, percel_service_1.percelServices.getPercelInfoByReceiverService(receiverId, query)];
+            case 1:
+                percel = _a.sent();
+                (0, sendResponse_1.sendResponse)(res, {
+                    statusCode: http_status_codes_1.default.OK,
+                    success: true,
+                    message: "percel retrived Succesfully",
+                    data: percel,
+                });
+                return [2 /*return*/];
+        }
+    });
+}); });
+var setConfirmation = (0, catchAsync_1.catchAsync)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var percelId, percel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                percelId = req.params.percelId;
+                return [4 /*yield*/, percel_service_1.percelServices.confrimationByReceiverService(percelId)];
+            case 1:
+                percel = _a.sent();
+                (0, sendResponse_1.sendResponse)(res, {
+                    statusCode: http_status_codes_1.default.OK,
+                    success: true,
+                    message: "percel confirm Succesfully",
+                    data: null,
+                });
+                return [2 /*return*/];
+        }
+    });
+}); });
 /* get Allpercel controller */
 var getPercelById = (0, catchAsync_1.catchAsync)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var percelId, percel;
@@ -97,7 +158,7 @@ var getPercelById = (0, catchAsync_1.catchAsync)(function (req, res) { return __
                     statusCode: http_status_codes_1.default.OK,
                     success: true,
                     message: "percel Retrived Succesfully",
-                    data: percel
+                    data: percel,
                 });
                 return [2 /*return*/];
         }
@@ -139,26 +200,6 @@ var updatePercel = (0, catchAsync_1.catchAsync)(function (req, res) { return __a
                     statusCode: http_status_codes_1.default.OK,
                     success: true,
                     message: "Parcel updated successfully",
-                    data: percel,
-                });
-                return [2 /*return*/];
-        }
-    });
-}); });
-/* get percel details by senderinfo */
-var getPercelInfo = (0, catchAsync_1.catchAsync)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var senderId, percel;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                senderId = req.params.senderId;
-                return [4 /*yield*/, percel_service_1.percelServices.getPercelInfoBySenderService(senderId)];
-            case 1:
-                percel = _a.sent();
-                (0, sendResponse_1.sendResponse)(res, {
-                    statusCode: http_status_codes_1.default.OK,
-                    success: true,
-                    message: "percel retrived Succesfully",
                     data: percel,
                 });
                 return [2 /*return*/];
@@ -211,5 +252,7 @@ exports.percelController = {
     updatePercel: updatePercel,
     getPercelInfo: getPercelInfo,
     trackingPercel: trackingPercel,
-    retrunPercel: retrunPercel
+    retrunPercel: retrunPercel,
+    getPercelInfoByReceiver: getPercelInfoByReceiver,
+    setConfirmation: setConfirmation,
 };

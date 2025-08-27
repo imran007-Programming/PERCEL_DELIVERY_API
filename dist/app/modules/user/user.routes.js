@@ -10,7 +10,9 @@ var user_interface_1 = require("./user.interface");
 var router = (0, express_1.Router)();
 router.post("/register", (0, validationRequest_1.zodValidation)(user_validation_1.userZodSchema), user_controller_1.userControllers.createUser);
 /* get all user */
-router.get("/allusers", (0, authMiddlewares_1.checkAuth)(user_interface_1.Role.ADMIN), user_controller_1.userControllers.getAllusers);
+router.get("/getalluser", (0, authMiddlewares_1.checkAuth)(user_interface_1.Role.ADMIN), user_controller_1.userControllers.getAllusers);
+/* get me */
+router.get("/me", authMiddlewares_1.checkAuth.apply(void 0, Object.values(user_interface_1.Role)), user_controller_1.userControllers.getMe);
 /* delete a user */
 router.delete("/delete/:userId", (0, authMiddlewares_1.checkAuth)(user_interface_1.Role.ADMIN), user_controller_1.userControllers.deleteUser);
 /* update a user */

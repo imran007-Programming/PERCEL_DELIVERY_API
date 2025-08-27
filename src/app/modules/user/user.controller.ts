@@ -43,7 +43,7 @@ const getAllusers = catchAsync(
       success: true,
       message: "User retrived Successfully",
       data: userData,
-      meta: userData.meta,
+    
     });
   }
 );

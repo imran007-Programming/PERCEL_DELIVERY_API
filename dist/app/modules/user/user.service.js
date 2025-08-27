@@ -109,6 +109,20 @@ var createUserService = function (payload) { return __awaiter(void 0, void 0, vo
         }
     });
 }); };
+/* GEt Me Service */
+var GetMeService = function (userId) { return __awaiter(void 0, void 0, void 0, function () {
+    var user;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, user_model_1.User.findById(userId).select("-password")];
+            case 1:
+                user = _a.sent();
+                return [2 /*return*/, {
+                        data: user,
+                    }];
+        }
+    });
+}); };
 /* get all user service */
 var getAllUserService = function (query) { return __awaiter(void 0, void 0, void 0, function () {
     var queryBuilder, user, _a, userData, meta;
@@ -130,7 +144,7 @@ var getAllUserService = function (query) { return __awaiter(void 0, void 0, void
                 _a = _b.sent(), userData = _a[0], meta = _a[1];
                 return [2 /*return*/, {
                         userData: userData,
-                        meta: meta
+                        meta: meta,
                     }];
         }
     });
@@ -157,14 +171,14 @@ var updateUserService = function (userId, payload, decodedToken) { return __awai
                 }
                 /* check role */
                 if (payload.role) {
-                    if (decodedToken.role === user_interface_1.Role.RECEVIER ||
+                    if (decodedToken.role === user_interface_1.Role.RECEIVER ||
                         decodedToken.role === user_interface_1.Role.SENDER) {
                         throw new AppError_1.default(http_status_codes_1.default.FORBIDDEN, "you are not authorized");
                     }
                 }
                 if (payload.isActive || payload.isVerified || payload.isDeleted) {
                     if (decodedToken.role === user_interface_1.Role.SENDER ||
-                        decodedToken.role === user_interface_1.Role.RECEVIER) {
+                        decodedToken.role === user_interface_1.Role.RECEIVER) {
                         throw new AppError_1.default(http_status_codes_1.default.FORBIDDEN, "you are not authorized");
                     }
                 }
@@ -223,9 +237,10 @@ var unblockUserService = function (userId) { return __awaiter(void 0, void 0, vo
 }); };
 exports.userServices = {
     createUserService: createUserService,
+    GetMeService: GetMeService,
     getAllUserService: getAllUserService,
     deleteUserService: deleteUserService,
     updateUserService: updateUserService,
     blockUserService: blockUserService,
-    unblockUserService: unblockUserService
+    unblockUserService: unblockUserService,
 };

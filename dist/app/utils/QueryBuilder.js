@@ -56,35 +56,56 @@ var QueryBuilder = /** @class */ (function () {
     }
     QueryBuilder.prototype.filter = function () {
         var filter = __assign({}, this.query);
+        // Remove any fields that should be excluded
         for (var _i = 0, excludeField_1 = constants_1.excludeField; _i < excludeField_1.length; _i++) {
             var field = excludeField_1[_i];
             delete filter[field];
         }
-        this.modelQuery = this.modelQuery.find(filter);
+        // Check if status is provided and handle filtering by the last status in trackingEvents
+        if (filter.status) {
+            this.modelQuery = this.modelQuery.find({
+                trackingEvents: {
+                    $elemMatch: {
+                        status: filter.status,
+                    },
+                },
+            });
+            delete filter.status;
+        }
+        // Apply any other filters that are left (excluding status)
+        if (Object.keys(filter).length > 0) {
+            this.modelQuery = this.modelQuery.find(filter);
+        }
         return this;
     };
+    // Search by term on specified fields
     QueryBuilder.prototype.search = function (searchableFields) {
         var searchTerm = this.query.searchTerm || "";
         var searchQuery = {
             $or: searchableFields.map(function (field) {
                 var _a;
-                return (_a = {}, _a[field] = { $regex: searchTerm, $options: "i" }, _a);
-            })
+                return (_a = {},
+                    _a[field] = { $regex: searchTerm, $options: "i" },
+                    _a);
+            }),
         };
         this.modelQuery = this.modelQuery.find(searchQuery);
         return this;
     };
+    // Sort by a specified field (defaults to createdAt)
     QueryBuilder.prototype.sort = function () {
         var sort = this.query.sort || "-createdAt";
         this.modelQuery = this.modelQuery.sort(sort);
         return this;
     };
+    // Select specific fields to return in the result
     QueryBuilder.prototype.fields = function () {
         var _a;
         var fields = ((_a = this.query.fields) === null || _a === void 0 ? void 0 : _a.split(",").join(" ")) || "";
         this.modelQuery = this.modelQuery.select(fields);
         return this;
     };
+    // Pagination handling
     QueryBuilder.prototype.paginate = function () {
         var page = Number(this.query.page) || 1;
         var limit = Number(this.query.limit) || 10;
@@ -92,15 +113,30 @@ var QueryBuilder = /** @class */ (function () {
         this.modelQuery = this.modelQuery.skip(skip).limit(limit);
         return this;
     };
+    // Build the query
     QueryBuilder.prototype.build = function () {
         return this.modelQuery;
     };
-    QueryBuilder.prototype.getMeta = function () {
+    // Get pagination metadata
+    QueryBuilder.prototype.getMeta = function (queryId) {
         return __awaiter(this, void 0, void 0, function () {
-            var totalDocuments, page, limit, totalPage;
+            var countQuery, totalDocuments, page, limit, totalPage;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.modelQuery.model.countDocuments()];
+                    case 0:
+                        countQuery = this.modelQuery.model.countDocuments();
+                        // Check if senderId or receiverId exists in the query
+                        if (queryId === null || queryId === void 0 ? void 0 : queryId.senderId) {
+                            countQuery = this.modelQuery.model.countDocuments({
+                                senderInfo: queryId.senderId,
+                            });
+                        }
+                        else if (queryId === null || queryId === void 0 ? void 0 : queryId.receiverId) {
+                            countQuery = this.modelQuery.model.countDocuments({
+                                reciverInfo: queryId.receiverId,
+                            });
+                        }
+                        return [4 /*yield*/, countQuery];
                     case 1:
                         totalDocuments = _a.sent();
                         page = Number(this.query.page) || 1;

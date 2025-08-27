@@ -6,11 +6,13 @@ export interface AuthToken {
 }
 
 export const setAuthCookies = (res: Response, tokenInfo: AuthToken) => {
+
   if (tokenInfo.accessToken) {
     res.cookie("accessToken", tokenInfo.accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+     
     });
   }
   if (tokenInfo.refreshToken) {
@@ -18,6 +20,7 @@ export const setAuthCookies = (res: Response, tokenInfo: AuthToken) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      
     });
   }
 };

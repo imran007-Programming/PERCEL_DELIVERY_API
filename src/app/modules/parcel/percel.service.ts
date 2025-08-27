@@ -18,6 +18,7 @@ type createPercel = Partial<IPercel> & {
   recevierEmail: string;
   recevierPhone: string;
   recevierAddress: string;
+  phone:string
 };
 
 /* create A percel */
@@ -31,7 +32,7 @@ const createPercelSevice = async (payload: createPercel) => {
       email: payload.recevierEmail,
       phone: payload.recevierPhone,
       address: payload.recevierAddress,
-      role: Role.RECEVIER,
+      role: Role.RECEIVER,
     });
   }
 
@@ -113,6 +114,8 @@ const getAllPercelService = async (query: Record<string, string>) => {
   };
 };
 
+
+
 /* get percel by senderInfo */
 const getPercelInfoBySenderService = async (
   senderId: string,
@@ -124,6 +127,7 @@ const getPercelInfoBySenderService = async (
     Percel.find({ senderInfo: senderId }),
     query
   );
+  
   
 
   // Apply filtering, searching, sorting, etc.
@@ -137,7 +141,7 @@ const getPercelInfoBySenderService = async (
 
   const [percelData, meta] = await Promise.all([
     percels.build(),
-    queryBuilder.getMeta({sederId:senderId}),
+    queryBuilder.getMeta({senderId:senderId}),
   ]);
 
   return {
@@ -328,9 +332,9 @@ const updatePercelService = async (
 
 const getPercelInByTrackinIdService = async (trackingId: string) => {
   const percel = await Percel.findOne({ trackingId })
-    .select("-_id trackingEvents senderInfo")
+    .select("-_id trackingEvents reciverInfo")
     .populate({
-      path: "senderInfo",
+      path: "reciverInfo",
       select: "name email phone address -_id",
     })
     .populate({
@@ -346,6 +350,7 @@ const getPercelInByTrackinIdService = async (trackingId: string) => {
     trackingEvents: percel.trackingEvents.map((event) => ({
       status: event.status,
       curreentLocation: event.location,
+      note:event.note,
       arrivedAt: event.timestamp,
     })),
   };
@@ -364,7 +369,7 @@ const returnPercelTrackinIdService = async (payload: createPercel) => {
   if (!existUser) {
     throw new AppError(httpStatus.NOT_FOUND, "user not found");
   }
-  if (existUser.role !== Role.RECEVIER) {
+  if (existUser.role !== Role.RECEIVER) {
     throw new AppError(
       httpStatus.FORBIDDEN,
       "you are not able to return the percel"

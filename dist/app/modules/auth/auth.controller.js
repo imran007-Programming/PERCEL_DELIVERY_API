@@ -92,13 +92,13 @@ var logout = (0, catchAsync_1.catchAsync)(function (req, res, next) { return __a
     return __generator(this, function (_a) {
         res.clearCookie("accessToken", {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
         });
         res.clearCookie("refreshToken", {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
         });
         (0, sendResponse_1.sendResponse)(res, {
             statusCode: http_status_codes_1.default.OK,
@@ -137,5 +137,5 @@ exports.authController = {
     loginUser: loginUser,
     getNewAccessToken: getNewAccessToken,
     logout: logout,
-    resetPassword: resetPassword
+    resetPassword: resetPassword,
 };
