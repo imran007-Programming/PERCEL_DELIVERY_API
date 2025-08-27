@@ -11,8 +11,6 @@ var router = (0, express_1.Router)();
 router.post("/create", (0, authMiddlewares_1.checkAuth)(user_interface_1.Role.ADMIN, user_interface_1.Role.SENDER), (0, validationRequest_1.zodValidation)(percel_validation_1.createPercelZodSchema), percel_conroller_1.percelController.createPercel);
 /* get all percel */
 router.get("/getallpercel", (0, authMiddlewares_1.checkAuth)(user_interface_1.Role.ADMIN), percel_conroller_1.percelController.getAllPercel);
-/* get all percel for sender */
-// router.get("/getallpercelbysender/:senderId",checkAuth(Role.SENDER),percelController.getAllPercel)
 /* return percel_request_by reciever */
 router.patch("/return_request", percel_conroller_1.percelController.retrunPercel);
 /* Update percel*/
