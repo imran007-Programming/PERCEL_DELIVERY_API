@@ -13,8 +13,7 @@ router.post("/create",checkAuth(Role.ADMIN,Role.SENDER),zodValidation(createPerc
 /* get all percel */
 router.get("/getallpercel",checkAuth(Role.ADMIN),percelController.getAllPercel)
 
-/* get all percel for sender */
-// router.get("/getallpercelbysender/:senderId",checkAuth(Role.SENDER),percelController.getAllPercel)
+
 
 /* return percel_request_by reciever */
 router.patch("/return_request",percelController.retrunPercel)
