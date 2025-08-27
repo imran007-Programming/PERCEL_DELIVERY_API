@@ -184,7 +184,7 @@ var deletePercel = (0, catchAsync_1.catchAsync)(function (req, res) { return __a
         }
     });
 }); });
-/* delete percel controller */
+/* update percel controller */
 var updatePercel = (0, catchAsync_1.catchAsync)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var percelId, payload, decodedToken, percel;
     return __generator(this, function (_a) {

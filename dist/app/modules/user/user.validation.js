@@ -51,8 +51,7 @@ exports.updateUserZodSchema = zod_1.default.object({
     })
         .refine(function (val) { return /\d/.test(val); }, {
         message: "Password must contain at least one digit",
-    })
-        .refine(function (val) { return /[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>/?`~]/.test(val); }, {
+    }).refine(function (val) { return /[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>/?`~]/.test(val); }, {
         message: "Password must contain at least one special character",
     }).optional(),
     phone: zod_1.default

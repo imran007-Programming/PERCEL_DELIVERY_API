@@ -11,6 +11,7 @@ var globalErrorHandler_1 = require("./app/middlewares/globalErrorHandler");
 var env_1 = require("./app/config/env");
 var app = (0, express_1.default)();
 app.use(express_1.default.json());
+app.set("trust proxy", 1);
 /* cookieparser */
 app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)({

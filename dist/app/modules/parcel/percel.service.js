@@ -342,9 +342,9 @@ var getPercelInByTrackinIdService = function (trackingId) { return __awaiter(voi
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, percel_model_1.Percel.findOne({ trackingId: trackingId })
-                    .select("-_id trackingEvents senderInfo")
+                    .select("-_id trackingEvents reciverInfo")
                     .populate({
-                    path: "senderInfo",
+                    path: "reciverInfo",
                     select: "name email phone address -_id",
                 })
                     .populate({
@@ -359,6 +359,7 @@ var getPercelInByTrackinIdService = function (trackingId) { return __awaiter(voi
                 result = __assign(__assign({}, percel.toObject()), { trackingEvents: percel.trackingEvents.map(function (event) { return ({
                         status: event.status,
                         curreentLocation: event.location,
+                        note: event.note,
                         arrivedAt: event.timestamp,
                     }); }) });
                 return [2 /*return*/, result];

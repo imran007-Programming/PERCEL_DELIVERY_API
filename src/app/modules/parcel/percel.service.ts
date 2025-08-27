@@ -77,7 +77,7 @@ We have collected your parcel (Tracking ID: ${createPercel.trackingId}) from ${
     }.
 
 You can track its status here:
-👉 https://parcel-delevery-system-api.vercel.app/api/v1/percel/track/${
+👉 https://percel-delievey-app.vercel.app/api/v1/percel/track/${
       createPercel.trackingId
     }
 
