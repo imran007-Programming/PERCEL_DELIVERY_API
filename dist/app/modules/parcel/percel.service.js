@@ -114,7 +114,7 @@ var createPercelSevice = function (payload) { return __awaiter(void 0, void 0, v
                 createPercel = _a.sent();
                 if (!(receiver === null || receiver === void 0 ? void 0 : receiver.email)) return [3 /*break*/, 7];
                 subject = "Parcel Collected - Tracking ID: ".concat(createPercel.trackingId);
-                message = "\nDear ".concat(receiver.name || "Customer", ",\n\nWe have collected your parcel (Tracking ID: ").concat(createPercel.trackingId, ") from ").concat(sender === null || sender === void 0 ? void 0 : sender.shopName, ".\n\nYou can track its status here:\n\uD83D\uDC49 https://percel-delievey-app.vercel.app/api/v1/percel/track/").concat(createPercel.trackingId, "\n\nThank you for choosing our service!\n\nBest regards,  \nParcel Delivery Team\n");
+                message = "\nDear ".concat(receiver.name || "Customer", ",\n\nWe have collected your parcel (Tracking ID: ").concat(createPercel.trackingId, ") from ").concat(sender === null || sender === void 0 ? void 0 : sender.shopName, ".\n\nYou can track its status here:\n\uD83D\uDC49 https://percel-delievey-app.vercel.app/track/").concat(createPercel.trackingId, "\n\nThank you for choosing our service!\n\nBest regards,  \nParcel Delivery Team\n");
                 return [4 /*yield*/, (0, sendEmail_1.sendEmail)(receiver.email, subject, message)];
             case 6:
                 _a.sent();

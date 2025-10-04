@@ -27,7 +27,7 @@ export class QueryBuilder<T> {
             status: filter.status,
           },
         },
-      });
+      }); 
 
       delete filter.status;
     }
