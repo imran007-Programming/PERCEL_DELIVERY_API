@@ -9,9 +9,9 @@ export interface AuthToken {
 export const setAuthCookies = (res: Response, tokenInfo: AuthToken) => {
   const cookieOptions = {
     httpOnly: true,
-    secure: true, // Railway uses HTTPS ✅
+    secure: true, 
     sameSite: "none" as const,
-    path: "/", // apply cookie to all routes
+    path: "/", 
   };
 
   if (tokenInfo.accessToken) {

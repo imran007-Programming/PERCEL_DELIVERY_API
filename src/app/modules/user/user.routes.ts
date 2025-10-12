@@ -10,7 +10,10 @@ const router = Router();
 
 router.post("/register",zodValidation(userZodSchema),userControllers.createUser);
 /* get all user */
-router.get("/getalluser",checkAuth(Role.ADMIN),userControllers.getAllusers);
+router.get("/getalluser",
+
+    // checkAuth(Role.ADMIN)
+    userControllers.getAllusers);
 
 /* get me */
 router.get("/me", checkAuth(...Object.values(Role)), userControllers.getMe)

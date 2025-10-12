@@ -35,6 +35,7 @@ const loginUserService = async (res:Response,payload: Partial<IUser>) => {
   if (!isPasswordMatch) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid email and password");
   }
+  
   const userToken = createUserToken(ExistUser);
    setAuthCookies(res, userToken);
   const { password: newpass, ...rest } = ExistUser.toObject();

@@ -11,7 +11,9 @@ router.post("/create",checkAuth(Role.ADMIN,Role.SENDER),zodValidation(createPerc
 
 
 /* get all percel */
-router.get("/getallpercel",checkAuth(Role.ADMIN),percelController.getAllPercel)
+router.get("/getallpercel",
+    // checkAuth(Role.ADMIN),
+percelController.getAllPercel)
 
 
 
