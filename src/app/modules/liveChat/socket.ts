@@ -7,6 +7,10 @@ let io: Server | undefined;
 import { Server as HttpServer } from "http";
 
 export function socketInit(server: HttpServer) {
+  // Track online users
+  const onlineUsers = new Map();
+
+  console.log(onlineUsers);
   io = new Server(server, {
     cors: {
       origin: process.env.FRONTEND_URL,
@@ -17,39 +21,48 @@ export function socketInit(server: HttpServer) {
   io.on("connection", (socket) => {
     console.log("User Connected:", socket.id);
 
-    socket.on("user-online", async ({ userId, userName, roomId }) => {
-      if (!userId) return;
-
-      await ActiveUser.findOneAndUpdate(
-        { userId },
-        { userName, socketId: socket.id, roomId, lastSeen: new Date() },
-        { upsert: true, new: true }
-      );
-
-      // Notify admin of current active users are online
-      const users = await ActiveUser.find({});
-      io?.emit("active-users", users);
-    });
-
     // join a private room
-    socket.on("join-room", async ({ roomId }) => {
+    socket.on("join-room", async ({ roomId, userName }) => {
       socket.join(roomId);
 
-      // Load chat history
-      const messages = await Message.find({ roomId }).sort({ time: 1 });
-      socket.emit("chat-history", messages);
+      ///save the active user in db
+      if (roomId && userName) {
+        await ActiveUser.findOneAndUpdate(
+          { roomId, userName },
+          { socketId: socket.id, lastSeen: new Date() },
+          { upsert: true }
+        );
+      }
+
+      // When a user comes online
+      socket.on("user-online", ({ userId, userName }) => {
+        onlineUsers.set(userId, { userId, userName, socketId: socket.id });
+
+        // Notify all admins or other clients about updated online users
+        io?.emit("update-active-users", Array.from(onlineUsers.values()));
+      });
+
+      //send updated active users list from db
+      const users = await ActiveUser.find({});
+      console.log(users);
+      io?.emit("active-users", users);
+
+      ///Load chat history
+      const message = await Message.find({ roomId }).sort({ time: 1 });
+      //   console.log(message);
+      socket.emit("chat-history", message);
     });
 
     // indicate that user is typing
     socket.on("typing", ({ roomId, userName }) => {
       console.log(`${userName} is typing...`);
-      socket.to(roomId).emit("typing", { userName }); 
+      socket.to(roomId).emit("typing", { userName }); // ✅ emit object
     });
 
     // indicate user stopped typing
     socket.on("stop-typing", ({ roomId, userName }) => {
       console.log(`${userName} stopped typing`);
-      socket.to(roomId).emit("stop-typing", { userName }); 
+      socket.to(roomId).emit("stop-typing", { userName }); // ✅ emit object
     });
 
     // handle message//
