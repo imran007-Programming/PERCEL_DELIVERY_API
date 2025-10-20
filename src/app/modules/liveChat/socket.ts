@@ -26,7 +26,7 @@ export function socketInit(server: HttpServer) {
         { upsert: true, new: true }
       );
 
-      // Notify admin of current active users
+      // Notify admin of current active users are online
       const users = await ActiveUser.find({});
       io?.emit("active-users", users);
     });
@@ -43,13 +43,13 @@ export function socketInit(server: HttpServer) {
     // indicate that user is typing
     socket.on("typing", ({ roomId, userName }) => {
       console.log(`${userName} is typing...`);
-      socket.to(roomId).emit("typing", { userName }); // ✅ emit object
+      socket.to(roomId).emit("typing", { userName }); 
     });
 
     // indicate user stopped typing
     socket.on("stop-typing", ({ roomId, userName }) => {
       console.log(`${userName} stopped typing`);
-      socket.to(roomId).emit("stop-typing", { userName }); // ✅ emit object
+      socket.to(roomId).emit("stop-typing", { userName }); 
     });
 
     // handle message//

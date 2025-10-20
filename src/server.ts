@@ -5,9 +5,9 @@ import { envVars } from "./app/config/env";
 import { Server } from "http";
 import http from "http";
 import { socketInit } from "./app/modules/liveChat/socket";
+
+
 // create HTTP server and attach socket.io
-
-
 let server: Server;
 
 const startServer = async () => {
