@@ -43,9 +43,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var app_1 = __importDefault(require("./app"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var env_1 = require("./app/config/env");
+var http_1 = __importDefault(require("http"));
+var socket_1 = require("./app/modules/liveChat/socket");
+// create HTTP server and attach socket.io
 var server;
 var startServer = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var error_1;
+    var httpServer, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -53,8 +56,10 @@ var startServer = function () { return __awaiter(void 0, void 0, void 0, functio
                 return [4 /*yield*/, mongoose_1.default.connect(env_1.envVars.DB_URL)];
             case 1:
                 _a.sent();
-                console.log('connected to db!');
-                server = app_1.default.listen(env_1.envVars.PORT, function () {
+                console.log("connected to db!");
+                httpServer = http_1.default.createServer(app_1.default);
+                (0, socket_1.socketInit)(httpServer);
+                server = httpServer.listen(env_1.envVars.PORT, function () {
                     console.log("SERVER is running at port ".concat(env_1.envVars.PORT));
                 });
                 return [3 /*break*/, 3];
