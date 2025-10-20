@@ -1,5 +1,6 @@
 import  mongoose  from 'mongoose';
 const activeUserSchema=new mongoose.Schema({
+    userId:String,
     roomId:String,
     userName:String,
     socketId:String,

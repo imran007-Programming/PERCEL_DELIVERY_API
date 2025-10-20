@@ -17,29 +17,27 @@ export function socketInit(server: HttpServer) {
   io.on("connection", (socket) => {
     console.log("User Connected:", socket.id);
 
-    // join a private room
-    socket.on("join-room", async ({ roomId, userName }) => {
-      socket.join(roomId);
-      
+    socket.on("user-online", async ({ userId, userName, roomId }) => {
+      if (!userId) return;
 
-      ///save the active user in db
-      if (roomId && userName) {
-        await ActiveUser.findOneAndUpdate(
-          { roomId, userName },
-          { socketId: socket.id, lastSeen: new Date() },
-          { upsert: true }
-        );
-      }
+      await ActiveUser.findOneAndUpdate(
+        { userId },
+        { userName, socketId: socket.id, roomId, lastSeen: new Date() },
+        { upsert: true, new: true }
+      );
 
-      //send updated active users list from db
+      // Notify admin of current active users
       const users = await ActiveUser.find({});
-        console.log(users)
       io?.emit("active-users", users);
+    });
 
-      ///Load chat history
-      const message = await Message.find({ roomId }).sort({ time: 1 });
-      //   console.log(message);
-      socket.emit("chat-history", message);
+    // join a private room
+    socket.on("join-room", async ({ roomId }) => {
+      socket.join(roomId);
+
+      // Load chat history
+      const messages = await Message.find({ roomId }).sort({ time: 1 });
+      socket.emit("chat-history", messages);
     });
 
     // indicate that user is typing
@@ -57,7 +55,7 @@ export function socketInit(server: HttpServer) {
     // handle message//
     socket.on("message", async ({ roomId, user, text }) => {
       const messageData = { roomId, user, text, time: new Date() };
-    
+
       // 1️⃣ Instantly broadcast to all users (including sender)
       io?.to(roomId).emit("message", messageData);
 
