@@ -43,13 +43,13 @@ export function socketInit(server: HttpServer) {
     // indicate that user is typing
     socket.on("typing", ({ roomId, userName }) => {
       console.log(`${userName} is typing...`);
-      socket.to(roomId).emit("typing", { userName }); 
+      socket.to(roomId).emit("typing", { userName });
     });
 
     // indicate user stopped typing
     socket.on("stop-typing", ({ roomId, userName }) => {
       console.log(`${userName} stopped typing`);
-      socket.to(roomId).emit("stop-typing", { userName }); 
+      socket.to(roomId).emit("stop-typing", { userName });
     });
 
     // handle message//
@@ -73,24 +73,31 @@ export function socketInit(server: HttpServer) {
     socket.on("getActiveUserForAdmin", async () => {
       const users = await ActiveUser.find({});
       socket.emit("active-users", users);
+      console.log(users)
     });
 
     ///Remove the user if he leaved the room
-    socket.on("leave-room", async ({ roomId }) => {
-      socket.leave(roomId);
-      await ActiveUser.findOneAndDelete({ socketId: socket.id });
+    // socket.on("leave-room", async ({ roomId }) => {
+    //   socket.leave(roomId);
+    //   await ActiveUser.findOneAndDelete({ socketId: socket.id });
 
-      /* send updated active userlist from db to client(Admin) */
-      const users = await ActiveUser.find({ roomId });
-      io?.to(roomId).emit("active-users", users);
-    });
+    //   /* send updated active userlist from db to client(Admin) */
+    //   const users = await ActiveUser.find({ roomId });
+    //   io?.to(roomId).emit("active-users", users);
+    // });
 
     /* disconnect the socket  */
-    socket.on("disconnect", async (reason) => {
-      await ActiveUser.findOneAndDelete({ socketId: socket.id });
-      const users = await ActiveUser.find({});
-      io?.emit("active-users", users);
-      console.log("User Disconnected", socket.id, "resone:", reason);
+    socket.on("disconnect", async () => {
+      const user = await ActiveUser.findOne({ socketId: socket.id });
+      if (!user) return;
+
+      // Wait 5 seconds before removing
+      setTimeout(async () => {
+        const stillOffline = await ActiveUser.findOne({ userId: user.userId });
+        if (stillOffline && stillOffline.socketId === socket.id) {
+          await ActiveUser.findOneAndDelete({ userId: user.userId });
+        }
+      }, 5000);
     });
   });
   return io;

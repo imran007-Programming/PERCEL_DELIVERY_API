@@ -5,7 +5,7 @@ import { envVars } from "./app/config/env";
 import { Server } from "http";
 import http from "http";
 import { socketInit } from "./app/modules/liveChat/socket";
-
+import { connectRedis } from "./redis";
 
 // create HTTP server and attach socket.io
 let server: Server;
@@ -14,8 +14,9 @@ const startServer = async () => {
   try {
     await mongoose.connect(envVars.DB_URL);
     console.log("connected to db!");
-    const httpServer=http.createServer(app)
-    socketInit(httpServer)
+    await connectRedis();
+    const httpServer = http.createServer(app);
+    socketInit(httpServer);
 
     server = httpServer.listen(envVars.PORT, () => {
       console.log(`SERVER is running at port ${envVars.PORT}`);
