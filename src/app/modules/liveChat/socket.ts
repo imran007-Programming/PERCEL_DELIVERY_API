@@ -68,23 +68,34 @@ export function socketInit(server: HttpServer) {
       }
     });
 
-    /* send the Active user to the admin(dashboard)  */
+    try {
+      /* send the Active user to the admin(dashboard)  */
 
-    socket.on("getActiveUserForAdmin", async () => {
-      const users = await ActiveUser.find({});
-      socket.emit("active-users", users);
-      console.log(users)
+      socket.on("getActiveUserForAdmin", async () => {
+        const users = await ActiveUser.find({});
+        socket.emit("active-users", users);
+        console.log(users);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    socket.on("merge-guest-to-user", async ({ guestId, userId }) => {
+      // Find guest chat/messages and reassign them
+      await Message.updateMany({ senderId: guestId }, { senderId: userId });
+      await ActiveUser.deleteOne({ userId: guestId });
     });
 
     ///Remove the user if he leaved the room
-    // socket.on("leave-room", async ({ roomId }) => {
-    //   socket.leave(roomId);
-    //   await ActiveUser.findOneAndDelete({ socketId: socket.id });
+    socket.on("leave-room", async ({ roomId }) => {
+      console.log("user leave the room");
+      socket.leave(roomId);
+      await ActiveUser.findOneAndDelete({ socketId: socket.id });
 
-    //   /* send updated active userlist from db to client(Admin) */
-    //   const users = await ActiveUser.find({ roomId });
-    //   io?.to(roomId).emit("active-users", users);
-    // });
+      /* send updated active userlist from db to client(Admin) */
+      const users = await ActiveUser.find({ roomId });
+      io?.to(roomId).emit("active-users", users);
+    });
 
     /* disconnect the socket  */
     socket.on("disconnect", async () => {

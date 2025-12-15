@@ -125,15 +125,38 @@ function socketInit(server) {
                 }
             });
         }); });
-        /* send the Active user to the admin(dashboard)  */
-        socket.on("getActiveUserForAdmin", function () { return __awaiter(_this, void 0, void 0, function () {
-            var users;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, ActiveUserSchema_1.ActiveUser.find({})];
+        try {
+            /* send the Active user to the admin(dashboard)  */
+            socket.on("getActiveUserForAdmin", function () { return __awaiter(_this, void 0, void 0, function () {
+                var users;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, ActiveUserSchema_1.ActiveUser.find({})];
+                        case 1:
+                            users = _a.sent();
+                            socket.emit("active-users", users);
+                            console.log(users);
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        }
+        catch (error) {
+            console.log(error);
+        }
+        socket.on("merge-guest-to-user", function (_a) { return __awaiter(_this, [_a], void 0, function (_b) {
+            var guestId = _b.guestId, userId = _b.userId;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0: 
+                    // Find guest chat/messages and reassign them
+                    return [4 /*yield*/, ChatSchema_1.Message.updateMany({ senderId: guestId }, { senderId: userId })];
                     case 1:
-                        users = _a.sent();
-                        socket.emit("active-users", users);
+                        // Find guest chat/messages and reassign them
+                        _c.sent();
+                        return [4 /*yield*/, ActiveUserSchema_1.ActiveUser.deleteOne({ userId: guestId })];
+                    case 2:
+                        _c.sent();
                         return [2 /*return*/];
                 }
             });
@@ -145,6 +168,7 @@ function socketInit(server) {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        console.log("user leave the room");
                         socket.leave(roomId);
                         return [4 /*yield*/, ActiveUserSchema_1.ActiveUser.findOneAndDelete({ socketId: socket.id })];
                     case 1:
@@ -158,18 +182,33 @@ function socketInit(server) {
             });
         }); });
         /* disconnect the socket  */
-        socket.on("disconnect", function (reason) { return __awaiter(_this, void 0, void 0, function () {
-            var users;
+        socket.on("disconnect", function () { return __awaiter(_this, void 0, void 0, function () {
+            var user;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, ActiveUserSchema_1.ActiveUser.findOneAndDelete({ socketId: socket.id })];
+                    case 0: return [4 /*yield*/, ActiveUserSchema_1.ActiveUser.findOne({ socketId: socket.id })];
                     case 1:
-                        _a.sent();
-                        return [4 /*yield*/, ActiveUserSchema_1.ActiveUser.find({})];
-                    case 2:
-                        users = _a.sent();
-                        io === null || io === void 0 ? void 0 : io.emit("active-users", users);
-                        console.log("User Disconnected", socket.id, "resone:", reason);
+                        user = _a.sent();
+                        if (!user)
+                            return [2 /*return*/];
+                        // Wait 5 seconds before removing
+                        setTimeout(function () { return __awaiter(_this, void 0, void 0, function () {
+                            var stillOffline;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, ActiveUserSchema_1.ActiveUser.findOne({ userId: user.userId })];
+                                    case 1:
+                                        stillOffline = _a.sent();
+                                        if (!(stillOffline && stillOffline.socketId === socket.id)) return [3 /*break*/, 3];
+                                        return [4 /*yield*/, ActiveUserSchema_1.ActiveUser.findOneAndDelete({ userId: user.userId })];
+                                    case 2:
+                                        _a.sent();
+                                        _a.label = 3;
+                                    case 3: return [2 /*return*/];
+                                }
+                            });
+                        }); }, 5000);
                         return [2 /*return*/];
                 }
             });
