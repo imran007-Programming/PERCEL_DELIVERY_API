@@ -1,18 +1,13 @@
-// import { Server } from "http";
 import app from "./app";
 import mongoose from "mongoose";
 import { envVars } from "./app/config/env";
 import { Server } from "http";
 import http from "http";
 import { socketInit } from "./app/modules/liveChat/socket";
+import axios from "axios";
 
-
-// create HTTP server and attach socket.io
 let server: Server;
-
-
-
-
+let keepAliveInterval: ReturnType<typeof setInterval>; // 👈
 
 const startServer = async () => {
   try {
@@ -24,7 +19,16 @@ const startServer = async () => {
 
     server = httpServer.listen(envVars.PORT, () => {
       console.log(`SERVER is running at port ${envVars.PORT}`);
+
+      // 👇 Start keep-alive ONLY after server is up
+      keepAliveInterval = setInterval(() => {
+        axios
+          .get("https://percel-delivery-api-bpht.onrender.com")
+          .then(() => console.log("Keep-alive ping sent"))
+          .catch((err) => console.error(`Keep-alive failed: ${err.message}`));
+      }, 30000);
     });
+
   } catch (error) {
     console.log(error);
   }
@@ -32,45 +36,26 @@ const startServer = async () => {
 
 startServer();
 
-/* Handle rejection error */
+// helper to cleanly shut down
+const shutdown = (signal: string) => {
+  console.log(`${signal} received... shutting down`);
+  clearInterval(keepAliveInterval); // 👈 always clean up
+  if (server) {
+    server.close(() => process.exit(0));
+  } else {
+    process.exit(0);
+  }
+};
+
 process.on("unhandledRejection", (err) => {
-  console.log("unhandle Rejection detected .... server shuting down", err);
-  if (server) {
-    server.close(() => {
-      process.exit(1);
-    });
-  }
-  process.exit(1);
+  console.log("Unhandled Rejection detected:", err);
+  shutdown("unhandledRejection");
 });
 
-/* Uncaught rejection error */
-process.on("uncaughtException", () => {
-  console.log("Uncaught Exception detected... Server shutting error");
-  if (server) {
-    server.close(() => {
-      process.exit(1);
-    });
-  }
-  process.exit(1);
+process.on("uncaughtException", (err) => {
+  console.log("Uncaught Exception detected:", err);
+  shutdown("uncaughtException");
 });
 
-/* Singnal termination sigtem */
-process.on("SIGTERM", () => {
-  console.log("SIGTERM signal recieved... Server shutting error");
-  if (server) {
-    server.close(() => {
-      process.exit(1);
-    });
-  }
-  process.exit(1);
-});
-
-process.on("SIGINT", () => {
-  console.log("SIGINT signal recieved... Server shutting error");
-  if (server) {
-    server.close(() => {
-      process.exit(1);
-    });
-  }
-  process.exit(1);
-});
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));

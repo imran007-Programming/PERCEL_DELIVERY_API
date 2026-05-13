@@ -39,28 +39,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// import { Server } from "http";
 var app_1 = __importDefault(require("./app"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var env_1 = require("./app/config/env");
 var http_1 = __importDefault(require("http"));
 var socket_1 = require("./app/modules/liveChat/socket");
 var axios_1 = __importDefault(require("axios"));
-// create HTTP server and attach socket.io
 var server;
-var url = "https://percel-delivery-api-bpht.onrender.com";
-var interval = 30000;
-function reloadWebsite() {
-    axios_1.default
-        .get(url)
-        .then(function (response) {
-        console.log("website reloded");
-    })
-        .catch(function (error) {
-        console.error("Error : ".concat(error.message));
-    });
-}
-setInterval(reloadWebsite, interval);
+var keepAliveInterval; // 👈
 var startServer = function () { return __awaiter(void 0, void 0, void 0, function () {
     var httpServer, error_1;
     return __generator(this, function (_a) {
@@ -75,6 +61,13 @@ var startServer = function () { return __awaiter(void 0, void 0, void 0, functio
                 (0, socket_1.socketInit)(httpServer);
                 server = httpServer.listen(env_1.envVars.PORT, function () {
                     console.log("SERVER is running at port ".concat(env_1.envVars.PORT));
+                    // 👇 Start keep-alive ONLY after server is up
+                    keepAliveInterval = setInterval(function () {
+                        axios_1.default
+                            .get("https://percel-delivery-api-bpht.onrender.com")
+                            .then(function () { return console.log("Keep-alive ping sent"); })
+                            .catch(function (err) { return console.error("Keep-alive failed: ".concat(err.message)); });
+                    }, 30000);
                 });
                 return [3 /*break*/, 3];
             case 2:
@@ -86,42 +79,24 @@ var startServer = function () { return __awaiter(void 0, void 0, void 0, functio
     });
 }); };
 startServer();
-/* Handle rejection error */
+// helper to cleanly shut down
+var shutdown = function (signal) {
+    console.log("".concat(signal, " received... shutting down"));
+    clearInterval(keepAliveInterval); // 👈 always clean up
+    if (server) {
+        server.close(function () { return process.exit(0); });
+    }
+    else {
+        process.exit(0);
+    }
+};
 process.on("unhandledRejection", function (err) {
-    console.log("unhandle Rejection detected .... server shuting down", err);
-    if (server) {
-        server.close(function () {
-            process.exit(1);
-        });
-    }
-    process.exit(1);
+    console.log("Unhandled Rejection detected:", err);
+    shutdown("unhandledRejection");
 });
-/* Uncaught rejection error */
-process.on("uncaughtException", function () {
-    console.log("Uncaught Exception detected... Server shutting error");
-    if (server) {
-        server.close(function () {
-            process.exit(1);
-        });
-    }
-    process.exit(1);
+process.on("uncaughtException", function (err) {
+    console.log("Uncaught Exception detected:", err);
+    shutdown("uncaughtException");
 });
-/* Singnal termination sigtem */
-process.on("SIGTERM", function () {
-    console.log("SIGTERM signal recieved... Server shutting error");
-    if (server) {
-        server.close(function () {
-            process.exit(1);
-        });
-    }
-    process.exit(1);
-});
-process.on("SIGINT", function () {
-    console.log("SIGINT signal recieved... Server shutting error");
-    if (server) {
-        server.close(function () {
-            process.exit(1);
-        });
-    }
-    process.exit(1);
-});
+process.on("SIGTERM", function () { return shutdown("SIGTERM"); });
+process.on("SIGINT", function () { return shutdown("SIGINT"); });
