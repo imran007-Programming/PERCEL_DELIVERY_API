@@ -5,9 +5,28 @@ import { envVars } from "./app/config/env";
 import { Server } from "http";
 import http from "http";
 import { socketInit } from "./app/modules/liveChat/socket";
+import axios from "axios";
 
 // create HTTP server and attach socket.io
 let server: Server;
+
+
+
+const url = `https://percel-delivery-api-bpht.onrender.com`;
+const interval = 30000;
+
+function reloadWebsite() {
+  axios
+    .get(url)
+    .then((response) => {
+      console.log("website reloded");
+    })
+    .catch((error) => {
+      console.error(`Error : ${error.message}`);
+    });
+}
+
+setInterval(reloadWebsite, interval);
 
 const startServer = async () => {
   try {

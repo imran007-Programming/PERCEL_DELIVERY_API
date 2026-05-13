@@ -45,8 +45,22 @@ var mongoose_1 = __importDefault(require("mongoose"));
 var env_1 = require("./app/config/env");
 var http_1 = __importDefault(require("http"));
 var socket_1 = require("./app/modules/liveChat/socket");
+var axios_1 = __importDefault(require("axios"));
 // create HTTP server and attach socket.io
 var server;
+var url = "https://percel-delivery-api-bpht.onrender.com";
+var interval = 30000;
+function reloadWebsite() {
+    axios_1.default
+        .get(url)
+        .then(function (response) {
+        console.log("website reloded");
+    })
+        .catch(function (error) {
+        console.error("Error : ".concat(error.message));
+    });
+}
+setInterval(reloadWebsite, interval);
 var startServer = function () { return __awaiter(void 0, void 0, void 0, function () {
     var httpServer, error_1;
     return __generator(this, function (_a) {
