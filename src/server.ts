@@ -26,7 +26,7 @@ const startServer = async () => {
           .get("https://percel-delivery-api-bpht.onrender.com")
           .then(() => console.log("Keep-alive ping sent"))
           .catch((err) => console.error(`Keep-alive failed: ${err.message}`));
-      }, 30000);
+      }, 780000);
     });
 
   } catch (error) {
