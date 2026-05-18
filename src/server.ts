@@ -23,7 +23,7 @@ const startServer = async () => {
       // 👇 Start keep-alive ONLY after server is up
       keepAliveInterval = setInterval(() => {
         axios
-          .get("https://percel-delivery-api-bpht.onrender.com")
+          .get("https://percel-delivery-api-1.onrender.com")
           .then(() => console.log("Keep-alive ping sent"))
           .catch((err) => console.error(`Keep-alive failed: ${err.message}`));
       }, 780000);
