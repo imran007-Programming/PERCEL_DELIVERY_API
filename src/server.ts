@@ -23,7 +23,7 @@ const startServer = async () => {
       keepAliveInterval = setInterval(() => {
         axios
           .get("https://percel-delivery-api-1.onrender.com/health", {
-            validateStatus: (status) => status < 500, // treats 404 as OK
+            validateStatus: () => true,
           })
           .then((res) =>
             console.log(`Keep-alive ping sent — status: ${res.status}`)
