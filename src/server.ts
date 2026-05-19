@@ -7,7 +7,7 @@ import { socketInit } from "./app/modules/liveChat/socket";
 import axios from "axios";
 
 let server: Server;
-let keepAliveInterval: ReturnType<typeof setInterval>;
+// let keepAliveInterval: ReturnType<typeof setInterval>;
 
 const startServer = async () => {
   try {
@@ -20,18 +20,18 @@ const startServer = async () => {
     server = httpServer.listen(envVars.PORT, () => {
       console.log(`SERVER is running at port ${envVars.PORT}`);
 
-      keepAliveInterval = setInterval(() => {
-        axios
-          .get("https://percel-delivery-api-1.onrender.com/health", {
-            validateStatus: () => true,
-          })
-          .then((res) =>
-            console.log(`Keep-alive ping sent — status: ${res.status}`)
-          )
-          .catch((err) =>
-            console.error(`Keep-alive failed: ${err.message}`)
-          );
-      }, 780000);
+      // keepAliveInterval = setInterval(() => {
+      //   axios
+      //     .get("https://percel-delivery-api-1.onrender.com/health", {
+      //       validateStatus: () => true,
+      //     })
+      //     .then((res) =>
+      //       console.log(`Keep-alive ping sent — status: ${res.status}`)
+      //     )
+      //     .catch((err) =>
+      //       console.error(`Keep-alive failed: ${err.message}`)
+      //     );
+      // }, 780000);
     });
   } catch (error) {
     console.log(error);
@@ -42,7 +42,7 @@ startServer();
 
 const shutdown = (signal: string) => {
   console.log(`${signal} received... shutting down`);
-  clearInterval(keepAliveInterval);
+  // clearInterval(keepAliveInterval);
   if (server) {
     server.close(() => process.exit(0));
   } else {
