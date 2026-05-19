@@ -46,7 +46,7 @@ var http_1 = __importDefault(require("http"));
 var socket_1 = require("./app/modules/liveChat/socket");
 var axios_1 = __importDefault(require("axios"));
 var server;
-var keepAliveInterval; // 👈
+var keepAliveInterval;
 var startServer = function () { return __awaiter(void 0, void 0, void 0, function () {
     var httpServer, error_1;
     return __generator(this, function (_a) {
@@ -61,13 +61,18 @@ var startServer = function () { return __awaiter(void 0, void 0, void 0, functio
                 (0, socket_1.socketInit)(httpServer);
                 server = httpServer.listen(env_1.envVars.PORT, function () {
                     console.log("SERVER is running at port ".concat(env_1.envVars.PORT));
-                    // 👇 Start keep-alive ONLY after server is up
                     keepAliveInterval = setInterval(function () {
                         axios_1.default
-                            .get("https://percel-delivery-api-bpht.onrender.com")
-                            .then(function () { return console.log("Keep-alive ping sent"); })
-                            .catch(function (err) { return console.error("Keep-alive failed: ".concat(err.message)); });
-                    }, 30000);
+                            .get("https://percel-delivery-api-1.onrender.com/health", {
+                            validateStatus: function () { return true; },
+                        })
+                            .then(function (res) {
+                            return console.log("Keep-alive ping sent \u2014 status: ".concat(res.status));
+                        })
+                            .catch(function (err) {
+                            return console.error("Keep-alive failed: ".concat(err.message));
+                        });
+                    }, 780000);
                 });
                 return [3 /*break*/, 3];
             case 2:
@@ -79,10 +84,9 @@ var startServer = function () { return __awaiter(void 0, void 0, void 0, functio
     });
 }); };
 startServer();
-// helper to cleanly shut down
 var shutdown = function (signal) {
     console.log("".concat(signal, " received... shutting down"));
-    clearInterval(keepAliveInterval); // 👈 always clean up
+    clearInterval(keepAliveInterval);
     if (server) {
         server.close(function () { return process.exit(0); });
     }

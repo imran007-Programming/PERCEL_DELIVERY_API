@@ -12,19 +12,21 @@ var env_1 = require("./app/config/env");
 var app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.set("trust proxy", 1);
-/* cookieparser */
 app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)({
     origin: env_1.envVars.FRONTEND_URL,
     credentials: true,
 }));
-/* base url */
-app.use("/api/v1", Allroutes_1.Allrouters);
+// ✅ Move these BEFORE Allrouters so nothing can intercept them
 app.get("/", function (req, res) {
-    res.status(200).send({
+    res.status(200).json({
         message: "welcome to Percel_Delevery_Api",
     });
 });
-// /* global error handler */
+app.get("/health", function (req, res) {
+    res.status(200).json({ status: "ok" });
+});
+/* base url — AFTER health routes */
+app.use("/api/v1", Allroutes_1.Allrouters);
 app.use(globalErrorHandler_1.globalErrorHandler);
 exports.default = app;
