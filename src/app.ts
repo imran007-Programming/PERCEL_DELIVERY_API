@@ -17,20 +17,19 @@ app.use(
   })
 );
 
-/* base url */
-app.use("/api/v1", Allrouters);
-
+// ✅ Move these BEFORE Allrouters so nothing can intercept them
 app.get("/", (req: Request, res: Response) => {
-  res.status(200).json({         // 👈 use .json() instead of .send() for consistency
+  res.status(200).json({
     message: "welcome to Percel_Delevery_Api",
   });
 });
 
-/* health check — keep this BEFORE globalErrorHandler */
-app.get("/health", (req: Request, res: Response) => {   // 👈 add types for consistency
+app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "ok" });
 });
 
+/* base url — AFTER health routes */
+app.use("/api/v1", Allrouters);
 
 app.use(globalErrorHandler);
 
