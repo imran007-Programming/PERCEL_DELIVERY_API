@@ -4,7 +4,7 @@ import { envVars } from "./app/config/env";
 import { Server } from "http";
 import http from "http";
 import { socketInit } from "./app/modules/liveChat/socket";
-import axios from "axios";
+// import axios from "axios";
 
 let server: Server;
 // let keepAliveInterval: ReturnType<typeof setInterval>;

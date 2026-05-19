@@ -44,6 +44,7 @@ var mongoose_1 = __importDefault(require("mongoose"));
 var env_1 = require("./app/config/env");
 var http_1 = __importDefault(require("http"));
 var socket_1 = require("./app/modules/liveChat/socket");
+// import axios from "axios";
 var server;
 // let keepAliveInterval: ReturnType<typeof setInterval>;
 var startServer = function () { return __awaiter(void 0, void 0, void 0, function () {
