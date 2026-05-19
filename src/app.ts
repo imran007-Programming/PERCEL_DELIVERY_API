@@ -8,7 +8,6 @@ import { envVars } from "./app/config/env";
 const app = express();
 app.use(express.json());
 app.set("trust proxy", 1);
-/* cookieparser */
 app.use(cookieParser());
 
 app.use(
@@ -22,12 +21,17 @@ app.use(
 app.use("/api/v1", Allrouters);
 
 app.get("/", (req: Request, res: Response) => {
-  res.status(200).send({
+  res.status(200).json({         // 👈 use .json() instead of .send() for consistency
     message: "welcome to Percel_Delevery_Api",
   });
 });
 
-// /* global error handler */
+/* health check — keep this BEFORE globalErrorHandler */
+app.get("/health", (req: Request, res: Response) => {   // 👈 add types for consistency
+  res.status(200).json({ status: "ok" });
+});
+
+
 app.use(globalErrorHandler);
 
 export default app;
