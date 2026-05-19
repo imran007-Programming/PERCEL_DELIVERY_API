@@ -31,7 +31,7 @@ const startServer = async () => {
           .catch((err) =>
             console.error(`Keep-alive failed: ${err.message}`)
           );
-      }, 780000);
+      }, 5000);
     });
   } catch (error) {
     console.log(error);

@@ -72,7 +72,7 @@ var startServer = function () { return __awaiter(void 0, void 0, void 0, functio
                             .catch(function (err) {
                             return console.error("Keep-alive failed: ".concat(err.message));
                         });
-                    }, 780000);
+                    }, 5000);
                 });
                 return [3 /*break*/, 3];
             case 2:
